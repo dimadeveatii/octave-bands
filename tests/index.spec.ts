@@ -1,4 +1,4 @@
-import { octaves, bandWidth, Band } from '../src';
+import { octaves, bandwidth, Band } from '../src';
 
 describe('octave-bands', () => {
   const expectBand = (received: Band, [low, center, high]: Band) => {
@@ -38,11 +38,11 @@ describe('octave-bands', () => {
     });
   });
 
-  describe('bandWidth', () => {
+  describe('bandwidth', () => {
     it.each([Number.NEGATIVE_INFINITY, -1, -Number.EPSILON, 0])(
       'validate fraction for %f',
       (fraction) => {
-        expect(() => bandWidth(fraction)).toThrow(/fraction/i);
+        expect(() => bandwidth(fraction)).toThrow(/fraction/i);
       }
     );
 
@@ -52,7 +52,7 @@ describe('octave-bands', () => {
       ['1/2', 1 / 2, 0.348],
       ['1/3', 1 / 3, 0.232],
     ])('%s-octave band width', (_, fraction, bw) => {
-      expect(bandWidth(fraction)).toBeCloseTo(bw, 3);
+      expect(bandwidth(fraction)).toBeCloseTo(bw, 3);
     });
   });
 });

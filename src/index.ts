@@ -36,11 +36,11 @@ export const octaves = (fraction = 1, options?: Options) => {
   };
 
   const factor = Math.pow(2, fraction);
-  const factor2 = fraction === 1 ? Math.SQRT2 : Math.pow(Math.SQRT2, fraction);
+  const factor2 = Math.pow(Math.SQRT2, fraction);
 
-  const bands: Band[] = [[center / factor2, center, center * factor2]];
+  const bands: Band[] = [];
 
-  for (let c = center / factor; c >= min; c /= factor) {
+  for (let c = center; c >= min; c /= factor) {
     bands.unshift([c / factor2, c, c * factor2]);
   }
 
@@ -56,7 +56,7 @@ export const octaves = (fraction = 1, options?: Options) => {
  * `BW = (f_high - f_low) / f_center`
  * @param fraction (default `1`) octave band fraction
  */
-export const bandWidth = (fraction = 1) => {
+export const bandwidth = (fraction = 1) => {
   validateFraction(fraction);
   return (Math.pow(2, fraction) - 1) / Math.pow(2, fraction / 2);
 };
@@ -66,3 +66,6 @@ const validateFraction = (fraction: number) => {
     throw new Error('fraction should be positive');
   }
 };
+
+const bands = octaves(1 / 2, { spectrum: [100, 16000] }); // or `octaves(1)`
+console.table(bands.map((x) => x.map((v) => Number(v.toFixed(3)))));
