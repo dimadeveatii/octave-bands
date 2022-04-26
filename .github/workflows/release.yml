@@ -47,7 +47,7 @@ jobs:
             dist/index.d.ts
 
       - name: Set version
-        run: npm version ${GITHUB_REF#refs/*/v} --no-commit-hooks --no-git-tag-version
+        run: npm version ${GITHUB_REF#refs/*/v.} --no-commit-hooks --no-git-tag-version
 
       - name: NPM Publish
         run: npm publish
