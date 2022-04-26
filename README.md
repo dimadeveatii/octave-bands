@@ -1,5 +1,8 @@
 # octave-bands
 
+![Build status](https://github.com/dimadeveatii/octave-bands/actions/workflows/ci.yml/badge.svg?branch=main)
+[![NPM Version](https://img.shields.io/npm/v/octave-bands.svg)](https://npmjs.org/package/octave-bands)
+
 Frequency limits for fractional _Octave Bands_.
 
 A small, lightweight package to calculate frequency limits for fractional octave bands.  
