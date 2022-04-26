@@ -1,4 +1,4 @@
-name: Create GitHub Release
+name: Release & Publish
 
 on:
   push:
@@ -35,7 +35,7 @@ jobs:
       - name: Test
         run: npm test
 
-      - name: Create release
+      - name: GitHub release
         uses: softprops/action-gh-release@v1
         with:
           files: |
@@ -45,3 +45,8 @@ jobs:
             dist/index.js
             dist/index.js.map
             dist/index.d.ts
+
+      - name: NPM Publish
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
