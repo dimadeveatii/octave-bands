@@ -36,6 +36,14 @@ jobs:
       - name: Test
         run: npm test
 
+      - name: Set version
+        run: npm version ${GITHUB_REF#refs/*/v} --no-commit-hooks --no-git-tag-version
+
+      - name: NPM Publish
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+
       - name: GitHub release
         uses: softprops/action-gh-release@v1
         with:
@@ -45,11 +53,3 @@ jobs:
             package.json
             dist/index.js
             dist/index.d.ts
-
-      - name: Set version
-        run: npm version ${GITHUB_REF#refs/*/v} --no-commit-hooks --no-git-tag-version
-
-      - name: NPM Publish
-        run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}

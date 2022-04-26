@@ -1,6 +1,6 @@
 {
   "name": "octave-bands",
-  "version": "1.0.3",
+  "version": "1.0.0",
   "description": "Frequency limits for fractional Octave Bands",
   "license": "MIT",
   "main": "dist/index.js",
