@@ -1,0 +1,12 @@
+.npmignore
+.gitignore
+.eslint*
+.prettier*
+.vscode
+jest.config.ts
+tsconfig.json
+.github/
+src/
+tests/
+coverage/
+node_modules/
