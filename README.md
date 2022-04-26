@@ -42,7 +42,7 @@ To get only the center frequencies:
 import { octaves } from 'octave-bands';
 
 const bands = octaves();
-console.table(bands.map(([_, center, _]) => center));
+console.table(bands.map(([low, center, high]) => center));
 
 /**
 ┌─────────┬────────┐
