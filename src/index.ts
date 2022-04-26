@@ -66,6 +66,3 @@ const validateFraction = (fraction: number) => {
     throw new Error('fraction should be positive');
   }
 };
-
-const bands = octaves(1 / 2, { spectrum: [100, 16000] }); // or `octaves(1)`
-console.table(bands.map((x) => x.map((v) => Number(v.toFixed(3)))));
