@@ -195,4 +195,4 @@ BW = (f_high - f_low) / f_center // for every one-Nth-octave band
 
 ## License
 
-[MIT](LICENSE.md)
+[MIT](LICENSE)
