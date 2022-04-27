@@ -47,6 +47,7 @@ jobs:
       - name: GitHub release
         uses: softprops/action-gh-release@v1
         with:
+          name: ${GITHUB_REF#refs/*/v}
           files: |
             README.md
             LICENSE
