@@ -1,4 +1,4 @@
-import { octaves, bandwidth, Band } from '../src';
+import { octaves, bandwidth, equalizer, Band } from '../src';
 
 describe('octave-bands', () => {
   const expectBand = (received: Band, [low, center, high]: Band) => {
@@ -8,12 +8,33 @@ describe('octave-bands', () => {
   };
 
   describe('octaves', () => {
-    it.each([Number.NEGATIVE_INFINITY, -1, -Number.EPSILON, 0])(
-      'validate fraction for %f',
-      (fraction) => {
-        expect(() => octaves(fraction)).toThrow(/fraction/i);
-      }
-    );
+    describe('validations', () => {
+      it.each([null, Number.NEGATIVE_INFINITY, -1, -Number.EPSILON, 0])(
+        'when fraction %f should throw',
+        (fraction) => {
+          expect(() => octaves(fraction)).toThrow(/fraction/i);
+        }
+      );
+
+      it.each([
+        [null, 10],
+        [10, null],
+        [0, 1000],
+        [200, 100],
+        [100, 100],
+      ])('when spectrum [%p, %p] should throw', (min, max) => {
+        expect(() => octaves(1, { spectrum: [min, max] })).toThrow(/spectrum/i);
+      });
+
+      it.each([null, 0, 9.99, 100.01])(
+        'when center %p should throw',
+        (center) => {
+          expect(() => octaves(1, { center, spectrum: [10, 100] })).toThrow(
+            /center/i
+          );
+        }
+      );
+    });
 
     it.each([
       ['default', '1', undefined],
@@ -53,12 +74,14 @@ describe('octave-bands', () => {
   });
 
   describe('bandwidth', () => {
-    it.each([Number.NEGATIVE_INFINITY, -1, -Number.EPSILON, 0])(
-      'validate fraction for %f',
-      (fraction) => {
-        expect(() => bandwidth(fraction)).toThrow(/fraction/i);
-      }
-    );
+    describe('validations', () => {
+      it.each([null, Number.NEGATIVE_INFINITY, -1, -Number.EPSILON, 0])(
+        'when faction %p should throw',
+        (fraction) => {
+          expect(() => bandwidth(fraction)).toThrow(/fraction/i);
+        }
+      );
+    });
 
     it.each([
       ['default', undefined, 0.707],
@@ -75,6 +98,56 @@ describe('octave-bands', () => {
 
       expect(bandwidth(1 / 10)).toBeCloseTo(bw, 6);
     });
+  });
+
+  describe('equalizer', () => {
+    describe('validations', () => {
+      it.each([null, 0, 10.1])('when bands %p should throw', (bands) => {
+        expect(() => equalizer(bands)).toThrow(/bands/i);
+      });
+
+      it.each([
+        [null, 10],
+        [10, null],
+        [0, 1000],
+        [200, 100],
+        [100, 100],
+      ])('when spectrum [%p, %p] should throw', (min, max) => {
+        expect(() => equalizer(11, { spectrum: [min, max] })).toThrow(
+          /spectrum/i
+        );
+      });
+    });
+
+    it.each([1, 7, 11, 21, 32, 99, 200])(
+      'when bands %p should verify bands count',
+      (bands) => {
+        const actual = equalizer(bands);
+        expect(actual).toHaveLength(bands);
+      }
+    );
+
+    it.each([2, 7, 11, 21, 32, 99, 200])(
+      'when bands %p should verify bounds',
+      (bands) => {
+        const spectrum: [number, number] = [20, 20000];
+        const actual = equalizer(bands, { spectrum });
+
+        expect(actual.at(0)[1]).toBeCloseTo(spectrum[0], 3);
+        expect(actual.at(-1)[1]).toBeCloseTo(spectrum[1], 3);
+      }
+    );
+
+    it.each([2, 7, 11, 21, 32, 99, 200])(
+      'when bands %p should verify bandwidth',
+      (bands) => {
+        const spectrum: [number, number] = [20, 20000];
+        const [first, ...others] = equalizer(bands, { spectrum });
+        const bw = ([low, center, high]: Band) => (high - low) / center;
+
+        others.forEach((b) => expect(bw(first)).toBeCloseTo(bw(b), 5));
+      }
+    );
   });
 });
 

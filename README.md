@@ -16,7 +16,7 @@ npm install octave-bands
 ```
 
 ```ts
-import { octaves, bandwidth } from 'octave-bands';
+import { octaves, bandwidth, equalizer } from 'octave-bands';
 ```
 
 ## Usage
@@ -99,25 +99,27 @@ console.table(bands);
 */
 ```
 
-Get _one-half-octave_ bands in a custom audio spectrum range:
+Get the frequency limits for a 21-band equalizer covering an audio spectrum
+from 20Hz to 20kHz
 
 ```ts
-import { octaves } from 'octave-bands';
+import { equalizer } from 'octave-bands';
 
-// Include only the bands with center frequencies
-// in spectrum range [100, 16000]
-const bands = octaves(1 / 2, { spectrum: [100, 16000] });
+const bands = equalizer(21, { spectrum: [20, 20000] });
 console.table(bands);
 
 /*
-┌─────────┬──────────┬───────────┬───────────┐
-│ (index) │    0     │     1     │     2     │
-├─────────┼──────────┼───────────┼───────────┤
-│    0    │ 105.112  │    125    │  148.651  │
-│    1    │ 148.651  │  176.777  │  210.224  │
-..............................................
-│   13    │ 9513.657 │ 11313.708 │ 13454.343 │
-└─────────┴──────────┴───────────┴───────────┘
+┌─────────┬───────────┬───────────┬───────────┐
+│ (index) │     0     │     1     │     2     │
+├─────────┼───────────┼───────────┼───────────┤
+│    0    │  16.828   │    20     │   23.77   │
+│    1    │   23.77   │  28.251   │  33.576   │
+│    2    │  33.576   │  39.905   │  47.427   │
+│    3    │  47.427   │  56.368   │  66.993   │
+...............................................
+│   19    │ 11913.243 │ 14158.916 │ 16827.903 │
+│   20    │ 16827.903 │   20000   │ 23770.045 │
+└─────────┴───────────┴───────────┴───────────┘
 */
 ```
 
@@ -133,7 +135,7 @@ console.log('1/3 octave bandwidth', bandwidth(1 / 3)); // ~0.232
 
 ## API
 
-> `octaves(fraction: number, options: Options): [number, number, number][]`
+> `octaves(fraction: number = 1, options?: Options): [number, number, number][]`
 
 Calculates the frequencies for fractional octave bands.
 
@@ -144,12 +146,36 @@ Arguments:
 
 ```ts
 type Options: {
-    center: number,
-    spectrum: [number, number]
+    center?: number,
+    spectrum?: [number, number]
 }
 ```
 
 - `center` the center frequency of the band that will be used as a starting point to calculate other bands (defaults to `1000`).
+- `spectrum` - a two-numbers array representing the _min_ and _max_ values to include for center frequencies (defaults to `[15, 21000]`)
+
+Returns:
+
+- `[number, number, number][]` returns an array where each element represents the frequency bounds of a band `[low, center, high]`
+
+> `equalizer(bands: number, options?: Options): [number, number, number][]`
+
+Calculates the frequency bounds for a given number of bands that should cover an audio spectrum.  
+This is similar to `octaves` function, but instead of using octave's _fraction_ to calculate the frequencies, it uses the
+number of bands to output.
+
+Arguments:
+
+- `bands` - the number of bands to output
+
+- `options` - additional options:
+
+```ts
+type Options: {
+    spectrum?: [number, number]
+}
+```
+
 - `spectrum` - a two-numbers array representing the _min_ and _max_ values to include for center frequencies (defaults to `[15, 21000]`)
 
 Returns:
