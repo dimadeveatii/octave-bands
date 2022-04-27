@@ -1,8 +1,8 @@
 # octave-bands
 
-![Build status](https://github.com/dimadeveatii/octave-bands/actions/workflows/ci.yml/badge.svg?branch=main)
+[![Build status](https://github.com/dimadeveatii/octave-bands/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/dimadeveatii/octave-bands/actions/workflows/ci.yml?query=branch%3Amain++)
 [![NPM Version](https://img.shields.io/npm/v/octave-bands.svg)](https://npmjs.org/package/octave-bands)
-![License](https://img.shields.io/npm/l/octave-bands)
+[![License](https://img.shields.io/npm/l/octave-bands)](https://github.com/dimadeveatii/octave-bands/blob/main/LICENSE)
 
 Frequency limits for fractional _Octave Bands_.
 
