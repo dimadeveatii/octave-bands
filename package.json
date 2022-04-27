@@ -22,14 +22,12 @@
     "email": "dimadeveatii@gmail.com"
   },
   "keywords": [
-    "octave",
-    "bands",
+    "octave-bands",
     "frequency",
     "audio",
-    "spectrum",
     "equalizer",
     "equalization",
-    "audio"
+    "audio-spectrum"
   ],
   "devDependencies": {
     "@types/jest": "^27.4.1",
