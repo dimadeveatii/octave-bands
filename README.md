@@ -16,7 +16,7 @@ npm install octave-bands
 ```
 
 ```ts
-import { octave, bandwidth } from 'octave-bands';
+import { octaves, bandwidth } from 'octave-bands';
 ```
 
 ## Usage
