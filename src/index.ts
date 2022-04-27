@@ -1,18 +1,17 @@
 export type Options = {
   /**
-   * Center frequency (default `1000` Hz)
+   * Center frequency of the band to use as a starting point (default `1000` Hz)
    */
   center?: number;
 
   /**
-   * The audio spectrum for center frequencies.
-   * (default `[15, 21000]`)
+   * The audio spectrum for center frequencies (default `[15, 21000]`)
    */
   spectrum?: [number, number];
 };
 
 /**
- * Lower, center and higher center frequencies of a band
+ * Lower, center and higher frequencies bounds of a band
  */
 export type Band = [number, number, number];
 

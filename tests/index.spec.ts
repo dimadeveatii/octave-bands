@@ -2,9 +2,9 @@ import { octaves, bandwidth, Band } from '../src';
 
 describe('octave-bands', () => {
   const expectBand = (received: Band, [low, center, high]: Band) => {
-    expect(received[0]).toBeCloseTo(low);
-    expect(received[1]).toBeCloseTo(center);
-    expect(received[2]).toBeCloseTo(high);
+    expect(received[0]).toBeCloseTo(low, 3);
+    expect(received[1]).toBeCloseTo(center, 3);
+    expect(received[2]).toBeCloseTo(high, 3);
   };
 
   describe('octaves', () => {
@@ -16,11 +16,11 @@ describe('octave-bands', () => {
     );
 
     it.each([
-      ['1', undefined],
-      ['1', 1],
-      ['1/2', 1 / 2],
-      ['1/3', 1 / 3],
-    ])('%s-octave bands', (f, fraction) => {
+      ['default', '1', undefined],
+      ['1', '1', 1],
+      ['1/2', '1/2', 1 / 2],
+      ['1/3', '1/3', 1 / 3],
+    ])('%s-octave bands', (_, f, fraction) => {
       const actual = octaves(fraction);
       const expected = OCTAVE_BANDS[f];
 
@@ -36,6 +36,20 @@ describe('octave-bands', () => {
       expectBand(bands[1], OCTAVE_BANDS['1/2'][6]);
       expectBand(bands[2], OCTAVE_BANDS['1/2'][7]);
     });
+
+    it.each([
+      ['1', 1],
+      ['1/2', 1 / 2],
+      ['1/3', 1 / 3],
+      ['1/4', 1 / 4],
+      ['1/5', 1 / 5],
+      ['1/10', 1 / 10],
+    ])('%s-octave bandwidth is constant', (_, f) => {
+      const [firstBand, ...bands] = octaves(f);
+      const bw = ([low, center, high]: Band) => (high - low) / center;
+
+      bands.forEach((band) => expect(bw(firstBand)).toBeCloseTo(bw(band)));
+    });
   });
 
   describe('bandwidth', () => {
@@ -47,12 +61,19 @@ describe('octave-bands', () => {
     );
 
     it.each([
-      ['1', undefined, 0.707],
+      ['default', undefined, 0.707],
       ['1', 1, 0.707],
       ['1/2', 1 / 2, 0.348],
       ['1/3', 1 / 3, 0.232],
-    ])('%s-octave band width', (_, fraction, bw) => {
+    ])('%s-octave bandwidth', (_, fraction, bw) => {
       expect(bandwidth(fraction)).toBeCloseTo(bw, 3);
+    });
+
+    it('formula', () => {
+      const [band] = octaves(1 / 10);
+      const bw = (band[2] - band[0]) / band[1];
+
+      expect(bandwidth(1 / 10)).toBeCloseTo(bw, 6);
     });
   });
 });

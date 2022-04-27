@@ -2,16 +2,21 @@
 
 ![Build status](https://github.com/dimadeveatii/octave-bands/actions/workflows/ci.yml/badge.svg?branch=main)
 [![NPM Version](https://img.shields.io/npm/v/octave-bands.svg)](https://npmjs.org/package/octave-bands)
+![License](https://img.shields.io/npm/l/octave-bands)
 
 Frequency limits for fractional _Octave Bands_.
 
-A small, lightweight package to calculate frequency limits for fractional octave bands.  
-Calculate the frequency limits for `1/2`, `1/3`, ... `1/N` octave bands.
+A small, lightweight package for calculating the frequency bounds for fractional octave bands.  
+Calculate the frequency bounds for `1/2`, `1/3`, ... `1/N` octave bands.
 
 ## Install
 
 ```sh
 npm install octave-bands
+```
+
+```ts
+import { octave, bandwidth } from 'octave-bands';
 ```
 
 ## Usage
@@ -24,7 +29,7 @@ import { octaves } from 'octave-bands';
 const bands = octaves(); // or `octaves(1)`
 console.table(bands);
 
-/**
+/*
 ┌─────────┬───────────┬────────┬───────────┐
 │ (index) │     0     │   1    │     2     │
 ├─────────┼───────────┼────────┼───────────┤
@@ -40,10 +45,11 @@ console.table(bands);
 │    9    │ 5656.854  │  8000  │ 11313.708 │
 │   10    │ 11313.708 │ 16000  │ 22627.417 │
 └─────────┴───────────┴────────┴───────────┘
-**/
+*/
 ```
 
-The `octaves` function returns an array of band frequencies, where each band is a tuple of its _low_, _center_ and _high_ frequency in the form of `[low, center, high]`.  
+The `octaves` function returns an array of band frequencies, where each band is a tuple of its _low_, _center_ and _high_ frequency in the form of `[low, center, high]`.
+
 To get only the center frequencies:
 
 ```ts
@@ -52,7 +58,7 @@ import { octaves } from 'octave-bands';
 const bands = octaves();
 console.table(bands.map(([low, center, high]) => center));
 
-/**
+/*
 ┌─────────┬────────┐
 │ (index) │ Values │
 ├─────────┼────────┤
@@ -68,10 +74,10 @@ console.table(bands.map(([low, center, high]) => center));
 │    9    │  8000  │
 │   10    │ 16000  │
 └─────────┴────────┘
-**/
+*/
 ```
 
-Get _one-third_ octave bands:
+Get _one-third-octave_ bands:
 
 ```ts
 import { octaves } from 'octave-bands';
@@ -79,7 +85,7 @@ import { octaves } from 'octave-bands';
 const bands = octaves(1 / 3);
 console.table(bands);
 
-/**
+/*
 ┌─────────┬───────────┬───────────┬───────────┐
 │ (index) │     0     │     1     │     2     │
 ├─────────┼───────────┼───────────┼───────────┤
@@ -90,10 +96,10 @@ console.table(bands);
 ...............................................
 │   31    │ 17959.393 │ 20158.737 │ 22627.417 │
 └─────────┴───────────┴───────────┴───────────┘
-**/
+*/
 ```
 
-Get _one-half_ octave bands in a custom audio spectrum range:
+Get _one-half-octave_ bands in a custom audio spectrum range:
 
 ```ts
 import { octaves } from 'octave-bands';
@@ -103,7 +109,7 @@ import { octaves } from 'octave-bands';
 const bands = octaves(1 / 2, { spectrum: [100, 16000] });
 console.table(bands);
 
-/**
+/*
 ┌─────────┬──────────┬───────────┬───────────┐
 │ (index) │    0     │     1     │     2     │
 ├─────────┼──────────┼───────────┼───────────┤
@@ -112,10 +118,10 @@ console.table(bands);
 ..............................................
 │   13    │ 9513.657 │ 11313.708 │ 13454.343 │
 └─────────┴──────────┴───────────┴───────────┘
-**/
+*/
 ```
 
-To get the fractional band width constant:
+To get the fractional bandwidth constant:
 
 ```ts
 import { bandwidth } from 'octave-bands';
@@ -125,6 +131,43 @@ console.log('1/2 octave bandwidth', bandwidth(1 / 2)); // ~0.348
 console.log('1/3 octave bandwidth', bandwidth(1 / 3)); // ~0.232
 ```
 
+## API
+
+> `octaves(fraction: number, options: Options): [number, number, number][]`
+
+Calculates the frequencies for fractional octave bands.
+
+Arguments:
+
+- `fraction` - octave fraction _(defaults to `1`)_
+- `options` - additional options:
+
+```ts
+type Options: {
+    center: number,
+    spectrum: [number, number]
+}
+```
+
+- `center` the center frequency of the band that will be used as a starting point to calculate other bands (defaults to `1000`).
+- `spectrum` - a two-numbers array representing the _min_ and _max_ values to include for center frequencies (defaults to `[15, 21000]`)
+
+Returns:
+
+- `[number, number, number][]` returns an array where each element represents the frequency bounds of a band `[low, center, high]`
+
+> `bandwidth(fraction: number): number`
+
+Calculates the constant bandwidth per 1/N-octave.
+
+Arguments:
+
+- `fraction` - octave fraction _(defaults to `1`)_
+
+Returns:
+
+- `number` the bandwidth constant
+
 ## Formula
 
 The following formula for calculating `1/N` octave bands in a given audio spectrum (ex. `~20Hz` to `~20KHz`) is used:
@@ -132,8 +175,7 @@ The following formula for calculating `1/N` octave bands in a given audio spectr
 ```js
 // 1/N: one-Nth-octave
 
-// Center frequency:
-f_center(middle_band) = 1000
+f_center_0 = 1000
 
 // Center frequency of i-th band
 f_center(i) = f_center(i-1) * 2^(1 / N) = f_center(i+1) * 1 / 2^(1 / N)
@@ -150,3 +192,7 @@ spectrum[0] <= f_center(i) <= spectrum[1]
 // Fractional band width per 1/N-octave band (constant):
 BW = (f_high - f_low) / f_center // for every one-Nth-octave band
 ```
+
+## License
+
+[MIT](LICENSE.md)
